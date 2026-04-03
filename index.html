@@ -1,154 +1,264 @@
-<div id="calendar-controls">
-  <button onclick="toggleAvailable()" id="filterBtn">Show Available Only</button>
-</div>
 
-<div id="calendar"></div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Booking Calendar</title>
 
 <style>
-#calendar {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 6px;
-  padding: 10px;
+body{
+  margin:0;
+  font-family:Arial;
+  background:#f4f4f4;
 }
 
-.day {
-  padding: 10px;
-  text-align: center;
-  border-radius: 8px;
-  background: #eee;
-  font-weight: bold;
+/* HEADER */
+header{
+  position:sticky;
+  top:0;
+  background:white;
+  padding:10px;
+  text-align:center;
+  box-shadow:0 2px 5px rgba(0,0,0,0.1);
 }
 
-.available {
-  background: #2ecc71;
-  color: white;
-  cursor: pointer;
+button{
+  padding:10px 15px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:bold;
 }
 
-.booked {
-  background: #e74c3c;
-  color: white;
-  pointer-events: none;
+#filterBtn{
+  background:#2ecc71;
+  color:white;
 }
 
-.closed {
-  background: #bdbdbd;
-  color: #666;
-  pointer-events: none;
+/* MONTH TITLE */
+.month-title{
+  text-align:center;
+  font-size:20px;
+  margin:20px 0 10px;
+  font-weight:bold;
 }
 
-.hidden {
-  display: none;
+/* CALENDAR GRID */
+.calendar{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:6px;
+  padding:10px;
 }
 
-.header-days {
-  font-weight: bold;
-  text-align: center;
-  padding: 5px;
+/* DAY LABELS */
+.day-name{
+  text-align:center;
+  font-weight:bold;
+  color:#444;
+}
+
+/* DAY BOX */
+.day{
+  background:white;
+  padding:10px;
+  text-align:center;
+  border-radius:8px;
+  font-weight:bold;
+}
+
+/* STATES */
+.available{
+  background:#2ecc71;
+  color:white;
+  cursor:pointer;
+}
+
+.booked{
+  background:#e74c3c;
+  color:white;
+  pointer-events:none;
+}
+
+.closed{
+  background:#bdbdbd;
+  color:#666;
+  pointer-events:none;
+}
+
+.hidden{
+  display:none;
 }
 </style>
+</head>
+
+<body>
+
+<header>
+  <button id="filterBtn" onclick="toggleFilter()">Show Available Only</button>
+</header>
+
+<div id="app"></div>
 
 <script>
+/* -----------------------
+   CONFIG
+------------------------*/
 const months = [
-  {name:"April", days:30},
-  {name:"May", days:31},
-  {name:"June", days:30}
+  { name:"April", year:2024, days:30 },
+  { name:"May", year:2024, days:31 },
+  { name:"June", year:2024, days:30 }
 ];
 
 let showOnlyAvailable = false;
 
-// generate exactly 13 slots per month
-function generateSlots(days) {
+/* 2-hour slots */
+const TIMES = [
+  "08:00–10:00",
+  "10:00–12:00",
+  "12:00–14:00",
+  "14:00–16:00",
+  "16:00–18:00"
+];
+
+/* -----------------------
+   GENERATE 13 SLOTS/MONTH
+------------------------*/
+function generateMonthSlots(year, monthIndex, totalDays){
   let slots = {};
   let used = new Set();
 
-  while(Object.keys(slots).length < 13) {
-    let d = Math.floor(Math.random() * days) + 1;
-    let date = new Date(2024, 3, d);
+  while(Object.keys(slots).length < 13){
+    let d = Math.floor(Math.random()*totalDays)+1;
+
+    let date = new Date(year, monthIndex, d);
     let day = date.getDay();
 
-    if(day === 0) continue; // Sunday skip
+    if(day === 0) continue; // Sunday
     if(used.has(d)) continue;
 
     used.add(d);
 
-    const times = [
-      "08:00–10:00",
-      "10:00–12:00",
-      "12:00–14:00",
-      "14:00–16:00",
-      "16:00–18:00"
-    ];
-
-    slots[d] = times[Math.floor(Math.random() * times.length)];
+    let time = TIMES[Math.floor(Math.random()*TIMES.length)];
+    slots[d] = time;
   }
 
   return slots;
 }
 
-const data = {
-  April: generateSlots(30),
-  May: generateSlots(31),
-  June: generateSlots(30)
+/* create data */
+let data = {
+  April: generateMonthSlots(2024,3,30),
+  May: generateMonthSlots(2024,4,31),
+  June: generateMonthSlots(2024,5,30)
 };
 
-function render() {
-  const cal = document.getElementById("calendar");
-  cal.innerHTML = "";
+/* -----------------------
+   RENDER CALENDAR
+------------------------*/
+function render(){
+  const app = document.getElementById("app");
+  app.innerHTML = "";
 
-  const daysHeader = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
-  daysHeader.forEach(d=>{
-    let el = document.createElement("div");
-    el.className = "header-days";
-    el.innerText = d;
-    cal.appendChild(el);
-  });
+  months.forEach((m, index)=>{
 
-  months.forEach(m => {
-    for(let i=1;i<=m.days;i++) {
-      let date = new Date(2024, months.indexOf(m)+3, i);
+    let monthBox = document.createElement("div");
+
+    /* TITLE */
+    let title = document.createElement("div");
+    title.className = "month-title";
+    title.innerText = m.name;
+    monthBox.appendChild(title);
+
+    /* GRID */
+    let grid = document.createElement("div");
+    grid.className = "calendar";
+
+    /* DAYS HEADER */
+    ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].forEach(d=>{
+      let el = document.createElement("div");
+      el.className = "day-name";
+      el.innerText = d;
+      grid.appendChild(el);
+    });
+
+    /* EMPTY OFFSET (start alignment) */
+    let firstDay = new Date(m.year, index+3, 1).getDay();
+    let offset = firstDay === 0 ? 6 : firstDay-1;
+
+    for(let i=0;i<offset;i++){
+      let empty = document.createElement("div");
+      grid.appendChild(empty);
+    }
+
+    /* DAYS */
+    for(let d=1; d<=m.days; d++){
+      let date = new Date(m.year, index+3, d);
       let day = date.getDay();
 
-      let div = document.createElement("div");
-      div.className = "day";
-      div.innerText = i;
+      let box = document.createElement("div");
+      box.className = "day";
+      box.innerText = d;
 
-      const isAvailable = data[m.name][i];
+      let isAvailable = data[m.name][d];
 
-      // Sunday closed
-      if(day === 0) {
-        div.classList.add("closed");
+      /* PAST DATE CHECK */
+      let today = new Date();
+      let isPast =
+        date < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+      if(day === 0){
+        box.classList.add("closed");
+        box.innerText = d;
       }
-      // available
-      else if(isAvailable) {
-        div.classList.add("available");
+      else if(isPast){
+        box.classList.add("closed");
+      }
+      else if(isAvailable){
+        box.classList.add("available");
 
-        div.onclick = () => {
-          let msg = `Booking: ${m.name} ${i} at ${data[m.name][i]}`;
+        box.onclick = () => {
+          let location = prompt("Enter your location:");
+          if(!location) location = "Not provided";
+
+          let msg =
+`Hi, I want to book ${m.name} ${d} at ${isAvailable}
+Location: ${location}`;
+
           window.open("https://wa.me/XXXXXXXXXX?text=" + encodeURIComponent(msg));
         };
       }
-      // booked
       else {
-        div.classList.add("booked");
+        box.classList.add("booked");
       }
 
-      if(showOnlyAvailable && !isAvailable) {
-        div.classList.add("hidden");
+      if(showOnlyAvailable && !isAvailable){
+        box.classList.add("hidden");
       }
 
-      cal.appendChild(div);
+      grid.appendChild(box);
     }
+
+    monthBox.appendChild(grid);
+    app.appendChild(monthBox);
   });
 }
 
-function toggleAvailable() {
+/* -----------------------
+   FILTER BUTTON
+------------------------*/
+function toggleFilter(){
   showOnlyAvailable = !showOnlyAvailable;
+
   document.getElementById("filterBtn").innerText =
     showOnlyAvailable ? "Show All" : "Show Available Only";
+
   render();
 }
 
 render();
 </script>
+
+</body>
+</html>
