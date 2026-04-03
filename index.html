@@ -9,58 +9,75 @@
 body {
   margin:0;
   font-family:Arial;
+  background:#fafafa;
   text-align:center;
 }
 
+/* HEADER */
 header {
-  padding:40px;
+  padding:30px;
   background:#ffe0ef;
 }
 
-#notice {
-  background:black;
-  color:white;
-  padding:10px;
-  font-size:14px;
-}
-
-#months {
-  padding:20px;
-}
-
-.month {
-  margin-top:30px;
-}
-
-.month-title {
-  font-size:22px;
-  color:#b30059;
-}
-
-.calendar {
+/* MONTH SWITCH */
+#monthSelector {
   display:flex;
-  flex-wrap:wrap;
   justify-content:center;
-  gap:6px;
+  gap:10px;
+  padding:10px;
+}
+
+.monthBtn {
+  padding:8px 12px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  background:#ddd;
+}
+
+.monthBtn.active {
+  background:#b30059;
+  color:white;
+}
+
+/* WEEK HEADER */
+.weekdays {
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
   max-width:420px;
   margin:auto;
+  font-size:12px;
+  font-weight:bold;
+  color:#666;
+}
+
+/* CALENDAR */
+#calendar {
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:5px;
+  max-width:420px;
+  margin:auto;
+  padding:10px;
 }
 
 .day {
-  width:55px;
-  height:55px;
+  height:45px;
   display:flex;
   align-items:center;
   justify-content:center;
-  border-radius:10px;
-  color:white;
+  border-radius:8px;
   font-weight:bold;
+  color:white;
   cursor:pointer;
 }
 
+.empty {background:transparent;}
 .free {background:#3498db;}
-.full {background:#e74c3c;}
+.busy {background:#e74c3c;}
+.past {background:#333; cursor:not-allowed;}
 
+/* TIMES */
 #timesSection {
   display:none;
   padding:20px;
@@ -68,13 +85,11 @@ header {
 
 .time {
   padding:12px;
-  margin:6px;
+  margin:6px auto;
   border-radius:8px;
+  max-width:260px;
   color:white;
   cursor:pointer;
-  max-width:260px;
-  margin-left:auto;
-  margin-right:auto;
 }
 </style>
 </head>
@@ -85,10 +100,19 @@ header {
   <h1>A.D Nails 💅</h1>
 </header>
 
-<div id="notice">Loading availability...</div>
+<!-- MONTH SELECT -->
+<div id="monthSelector"></div>
 
-<div id="months"></div>
+<!-- WEEK DAYS -->
+<div class="weekdays">
+  <div>Mon</div><div>Tue</div><div>Wed</div>
+  <div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
+</div>
 
+<!-- CALENDAR -->
+<div id="calendar"></div>
+
+<!-- TIMES -->
 <div id="timesSection">
   <h2 id="selectedDate"></h2>
   <div id="times"></div>
@@ -97,14 +121,18 @@ header {
 
 <script>
 
-const monthsEl = document.getElementById("months");
-const timesSection = document.getElementById("timesSection");
-const timesEl = document.getElementById("times");
-const selectedDate = document.getElementById("selectedDate");
-const notice = document.getElementById("notice");
-
 const months = ["April","May","June"];
+let currentMonth = "April";
 
+const calendar = document.getElementById("calendar");
+const monthSelector = document.getElementById("monthSelector");
+const timesSection = document.getElementById("timesSection");
+const timesDiv = document.getElementById("times");
+const selectedDate = document.getElementById("selectedDate");
+
+let bookings = {};
+
+// 5 REAL slots
 const slots = [
   "08:00 - 10:00",
   "10:00 - 12:00",
@@ -113,106 +141,86 @@ const slots = [
   "16:00 - 18:00"
 ];
 
-let bookings = {};
-
-// ------------------- WHATSAPP -------------------
-function whatsappLink(dateKey, slot) {
-  let msg = `Hi, I want to book A.D Nails 💅%0ADate: ${dateKey}%0ATime: ${slot}`;
-  return `https://wa.me/35699758628?text=${msg}`;
+// random availability per day
+function randomBusy() {
+  return Math.random() < 0.35;
 }
 
-// ------------------- WEEK SYSTEM -------------------
-function updateWeeklyNotice() {
+// MONTH BUTTONS
+function createMonthButtons() {
+  months.forEach(m => {
+    let btn = document.createElement("button");
+    btn.innerText = m;
+    btn.className = "monthBtn";
+    if (m === currentMonth) btn.classList.add("active");
 
-  let today = new Date();
-  let day = today.getDay();
+    btn.onclick = () => {
+      currentMonth = m;
+      updateMonths();
+    };
 
-  let monday = new Date(today);
-  monday.setDate(today.getDate() - (day === 0 ? 6 : day - 1));
+    monthSelector.appendChild(btn);
+  });
+}
 
-  let sunday = new Date(monday);
-  sunday.setDate(monday.getDate() + 6);
+// CALENDAR
+function updateMonths() {
 
-  let availableDays = 0;
-
-  months.forEach(month => {
-    for (let i = 1; i <= 30; i++) {
-
-      let key = month + "-" + i;
-      let dateObj = new Date(`2026 ${month} ${i}`);
-
-      if (dateObj >= monday && dateObj <= sunday) {
-
-        let bookedCount = bookings[key] ? bookings[key].length : 0;
-
-        if (bookedCount < slots.length) {
-          availableDays++;
-        }
-      }
-    }
+  document.querySelectorAll(".monthBtn").forEach(b => {
+    b.classList.remove("active");
+    if (b.innerText === currentMonth) b.classList.add("active");
   });
 
-  if (availableDays <= 3) {
-    notice.innerText = "⚠️ Only 3 days left this week!";
-    notice.style.background = "red";
-  } else {
-    notice.innerText = "✅ Good availability this week";
-    notice.style.background = "black";
-  }
-}
+  calendar.innerHTML = "";
 
-// ------------------- CALENDAR -------------------
-function createCalendar() {
+  let today = new Date();
+  let year = 2026;
 
-  months.forEach(month => {
+  for (let i = 1; i <= 30; i++) {
 
-    let box = document.createElement("div");
-    box.className = "month";
+    let key = currentMonth + "-" + i;
 
-    let title = document.createElement("div");
-    title.className = "month-title";
-    title.innerText = month;
+    let dateObj = new Date(`${currentMonth} ${i}, ${year}`);
 
-    let cal = document.createElement("div");
-    cal.className = "calendar";
+    let div = document.createElement("div");
+    div.className = "day";
+    div.innerText = i;
 
-    for (let i = 1; i <= 30; i++) {
+    // PAST DAYS
+    if (dateObj < today) {
+      div.classList.add("past");
+      div.innerText = "X";
+      div.style.cursor = "not-allowed";
+    }
+    else {
 
-      let key = month + "-" + i;
+      let booked = bookings[key] ? bookings[key].length : 0;
+      let busy = randomBusy();
 
-      let div = document.createElement("div");
-      div.className = "day";
-      div.innerText = i;
-
-      let bookedCount = bookings[key] ? bookings[key].length : 0;
-
-      if (bookedCount >= slots.length) {
-        div.classList.add("full");
+      if (booked >= slots.length || busy) {
+        div.classList.add("busy");
       } else {
         div.classList.add("free");
         div.onclick = () => openDay(key);
       }
-
-      cal.appendChild(div);
     }
 
-    box.appendChild(title);
-    box.appendChild(cal);
-    monthsEl.appendChild(box);
-  });
+    calendar.appendChild(div);
+  }
 }
 
-// ------------------- OPEN DAY -------------------
+// OPEN DAY
 function openDay(key) {
 
-  monthsEl.style.display = "none";
+  calendar.style.display = "none";
+  monthSelector.style.display = "none";
   timesSection.style.display = "block";
 
   selectedDate.innerText = key;
 
   if (!bookings[key]) bookings[key] = [];
 
-  timesEl.innerHTML = "";
+  timesDiv.innerHTML = "";
 
   slots.forEach(slot => {
 
@@ -227,27 +235,23 @@ function openDay(key) {
     if (!booked) {
       div.onclick = () => {
         bookings[key].push(slot);
-
-        // WhatsApp AUTO OPEN
-        window.open(whatsappLink(key, slot), "_blank");
-
-        updateWeeklyNotice();
         openDay(key);
       };
     }
 
-    timesEl.appendChild(div);
+    timesDiv.appendChild(div);
   });
 }
 
 function back() {
-  monthsEl.style.display = "block";
+  calendar.style.display = "grid";
+  monthSelector.style.display = "flex";
   timesSection.style.display = "none";
 }
 
 // INIT
-createCalendar();
-updateWeeklyNotice();
+createMonthButtons();
+updateMonths();
 
 </script>
 
