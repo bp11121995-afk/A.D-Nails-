@@ -10,15 +10,37 @@ body {
   margin:0;
   font-family:Arial;
   text-align:center;
+  overflow-x:hidden;
+}
+
+/* ✨ BACKGROUND LIGHTS */
+body::before, body::after {
+  content:"";
+  position:fixed;
+  width:400px;
+  height:400px;
+  border-radius:50%;
+  filter:blur(120px);
+  z-index:-1;
+  animation:move 10s infinite alternate;
+}
+
+body::before { background:#ffb6d5; top:-100px; left:-100px; }
+body::after { background:#c77dff; bottom:-100px; right:-100px; }
+
+@keyframes move {
+  0% {transform:translate(0,0);}
+  100% {transform:translate(80px,-60px);}
 }
 
 /* HEADER */
 header {
-  padding:60px 20px;
-  background:linear-gradient(180deg,#ffb6d5,#ffe6f0);
+  padding:70px 20px;
+  background:linear-gradient(#ffb6d5,#ffe6f0);
 }
 
 h1 {color:#b30059;margin:0;}
+
 .since {font-size:14px;}
 
 .btn {
@@ -31,33 +53,105 @@ h1 {color:#b30059;margin:0;}
   text-decoration:none;
 }
 
-/* CALENDAR */
-.calendar, .times {
-  max-width:900px;
-  margin:20px auto;
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+.phone {margin-top:10px;}
+
+/* ROAD */
+.road {
+  margin-top:30px;
+  height:80px;
+  background:#222;
+  position:relative;
+  overflow:hidden;
+  border-radius:10px;
+}
+
+.car {
+  position:absolute;
+  top:20px;
+  font-size:35px;
+  animation:drive 5s linear infinite;
+  transform:scaleX(-1);
+}
+
+.home {
+  position:absolute;
+  right:10px;
+  top:18px;
+  font-size:35px;
+}
+
+@keyframes drive {
+  0% {left:-80px;}
+  100% {left:110%;}
+}
+
+/* SECTIONS */
+.section {padding:50px 20px;}
+
+.cards {
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
   gap:10px;
 }
 
-.box {
+.card {
+  background:white;
   padding:15px;
   border-radius:10px;
+  width:200px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* WHY */
+.why-box {
+  max-width:600px;
+  margin:auto;
+  background:white;
+  padding:20px;
+  border-radius:10px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* CALENDAR */
+#calendar {
+  max-width:400px;
+  margin:20px auto;
+}
+
+.month {
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:5px;
+}
+
+.day {
+  padding:10px;
+  border-radius:8px;
   color:white;
-  font-weight:bold;
   cursor:pointer;
 }
 
-.available { background:#2ecc71; }
-.full { background:#e74c3c; cursor:not-allowed;}
-.closed { background:#555; cursor:not-allowed;}
+.available {background:#2ecc71;}
+.full {background:#e74c3c;}
+.closed {background:#555;}
 
-.back {
-  margin:15px;
-  display:inline-block;
-  cursor:pointer;
-  color:#b30059;
+#times {
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  max-width:300px;
+  margin:auto;
 }
+
+.time {
+  padding:10px;
+  border-radius:8px;
+  color:white;
+}
+
+/* FOOTER */
+footer {padding:20px;}
 </style>
 </head>
 
@@ -66,91 +160,130 @@ h1 {color:#b30059;margin:0;}
 <header>
   <h1>A.D Nails 💅</h1>
   <div class="since">Since 2020</div>
+
   <a class="btn" href="https://wa.me/35699758628">Book on WhatsApp</a>
-  <div>📞 +356 99 75 86 28</div>
+  <div class="phone">📞 +356 99 75 86 28</div>
+
+  <div class="road">
+    <div class="car">🚗</div>
+    <div class="home">🏠</div>
+  </div>
 </header>
 
-<h2>Select Date</h2>
+<div class="section">
+  <h2>Services</h2>
 
-<div id="calendar" class="calendar"></div>
-
-<div id="timesSection" style="display:none;">
-  <div class="back" onclick="goBack()">⬅ Back to Dates</div>
-  <h2 id="selectedDate"></h2>
-  <div id="times" class="times"></div>
+  <div class="cards">
+    <div class="card">Manicure €15–20</div>
+    <div class="card">Gel Nails €25–35</div>
+    <div class="card">Acrylic €40–50</div>
+    <div class="card">Men Manicure €10–15</div>
+  </div>
 </div>
+
+<div class="section">
+  <h2>Why A.D Nails?</h2>
+
+  <div class="why-box">
+    <p>A.D Nails is a professional mobile nail service in Malta. I come to your home for comfort and convenience.</p>
+    <p>Services for <b>men and women</b> with clean, reliable and affordable work.</p>
+    <p>✔ Trusted since 2020 ✔ Clean ✔ On time ✔ Professional</p>
+  </div>
+</div>
+
+<div class="section">
+  <h2>📅 Booking Calendar</h2>
+
+  <div id="calendar"></div>
+
+  <div id="timesSection" style="display:none;">
+    <div onclick="goBack()" style="cursor:pointer;margin:10px;">⬅ Back</div>
+    <h3 id="selectedDate"></h3>
+    <div id="times"></div>
+  </div>
+</div>
+
+<footer>
+  © 2026 A.D Nails Malta
+</footer>
 
 <script>
 const calendar = document.getElementById("calendar");
 const timesSection = document.getElementById("timesSection");
 const timesDiv = document.getElementById("times");
-const selectedDateText = document.getElementById("selectedDate");
+const selectedDate = document.getElementById("selectedDate");
 
-let today = new Date();
+let now = new Date();
+let month = now.getMonth();
+let year = now.getFullYear();
 
-// generate dates (2 months)
-for (let i = 0; i < 60; i++) {
-  let date = new Date();
-  date.setDate(today.getDate() + i);
+function generateCalendar() {
+  let firstDay = new Date(year, month).getDay();
+  let days = new Date(year, month+1, 0).getDate();
 
-  let day = date.getDay();
-  let textDate = date.toDateString();
+  let grid = document.createElement("div");
+  grid.classList.add("month");
 
-  let div = document.createElement("div");
-  div.classList.add("box");
-
-  if (day === 0) {
-    div.classList.add("closed");
-    div.innerHTML = `CLOSED<br>${textDate}`;
-  }
-  else if (day === 1 || day === 3 || day === 5) {
-    div.classList.add("available");
-    div.innerHTML = `AVAILABLE<br>${textDate}`;
-    div.onclick = () => showTimes(textDate);
-  }
-  else {
-    div.classList.add("full");
-    div.innerHTML = `FULL<br>${textDate}`;
+  for(let i=0;i<firstDay;i++){
+    grid.appendChild(document.createElement("div"));
   }
 
-  calendar.appendChild(div);
+  for(let d=1; d<=days; d++){
+    let date = new Date(year, month, d);
+    let day = date.getDay();
+
+    let div = document.createElement("div");
+    div.classList.add("day");
+    div.innerText = d;
+
+    if(day===0){
+      div.classList.add("closed");
+    }
+    else if(day===1||day===3||day===5){
+      div.classList.add("available");
+      div.onclick=()=>showTimes(date.toDateString());
+    }
+    else{
+      div.classList.add("full");
+    }
+
+    grid.appendChild(div);
+  }
+
+  calendar.appendChild(grid);
 }
 
-// show times (5 slots)
-function showTimes(dateText) {
-  calendar.style.display = "none";
-  timesSection.style.display = "block";
-  selectedDateText.innerText = dateText;
+function showTimes(dateText){
+  calendar.style.display="none";
+  timesSection.style.display="block";
+  selectedDate.innerText=dateText;
 
-  timesDiv.innerHTML = "";
+  timesDiv.innerHTML="";
+  let times=["08:00","10:00","12:00","14:00","16:00"];
 
-  const times = ["08:00","10:00","12:00","14:00","16:00"];
+  times.forEach(t=>{
+    let div=document.createElement("div");
+    div.classList.add("time");
 
-  times.forEach(time => {
-    let div = document.createElement("div");
-    div.classList.add("box");
-
-    // only 1 slot free (8:00), others full
-    if (time === "08:00") {
-      div.classList.add("available");
-      div.innerHTML = `🟢 ${time}`;
-
-      div.onclick = () => {
-        window.open(`https://wa.me/35699758628?text=Hi I want to book ${dateText} at ${time}`);
-      };
+    if(t==="08:00"){
+      div.style.background="#2ecc71";
+      div.innerText="🟢 "+t;
+      div.onclick=()=>window.open(`https://wa.me/35699758628?text=Book ${dateText} ${t}`);
     } else {
-      div.classList.add("full");
-      div.innerHTML = `🔴 ${time}`;
+      div.style.background="#e74c3c";
+      div.innerText="🔴 "+t;
     }
 
     timesDiv.appendChild(div);
   });
 }
 
-function goBack() {
-  calendar.style.display = "grid";
-  timesSection.style.display = "none";
+function goBack(){
+  calendar.style.display="block";
+  timesSection.style.display="none";
 }
+
+generateCalendar();
 </script>
 
 </body>
