@@ -9,8 +9,40 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: linear-gradient(180deg, #ffe6f0, #ffffff);
   color: #333;
+  overflow-x: hidden;
+  background: #fff;
+}
+
+/* ✨ MOVING LIGHT BACKGROUND */
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  filter: blur(120px);
+  z-index: -1;
+  animation: floatLights 10s infinite alternate ease-in-out;
+}
+
+body::before {
+  background: #ffb6d5;
+  top: -100px;
+  left: -100px;
+}
+
+body::after {
+  background: #c77dff;
+  bottom: -120px;
+  right: -120px;
+  animation-delay: 2s;
+}
+
+@keyframes floatLights {
+  0% { transform: translate(0,0); }
+  100% { transform: translate(80px, -60px); }
 }
 
 /* HEADER */
@@ -58,6 +90,13 @@ h1 {
   font-weight: bold;
 }
 
+/* PHONE UNDER BUTTON */
+.phone {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #333;
+}
+
 /* ROAD */
 .road {
   margin-top: 40px;
@@ -68,16 +107,14 @@ h1 {
   border-radius: 12px;
 }
 
-/* CAR (FIXED TURNED FORWARD) */
 .car {
   position: absolute;
   top: 25px;
   font-size: 38px;
   animation: drive 5s linear infinite;
-  transform: scaleX(-1); /* 👈 THIS FIXES DIRECTION */
+  transform: scaleX(-1);
 }
 
-/* HOME */
 .home {
   position: absolute;
   right: 15px;
@@ -85,7 +122,6 @@ h1 {
   font-size: 40px;
 }
 
-/* FORWARD ANIMATION */
 @keyframes drive {
   0% { left: -80px; }
   100% { left: 110%; }
@@ -117,7 +153,7 @@ h2 {
   box-shadow: 0 6px 18px rgba(0,0,0,0.08);
 }
 
-/* WHY SECTION */
+/* WHY BOX */
 .why-box {
   max-width: 650px;
   margin: auto;
@@ -160,13 +196,15 @@ footer {
   <p class="subtitle">Luxury Mobile Nail Service in Malta</p>
 
   <div class="badge">✨ I come to your home</div>
-  <div class="badge">💅 Men & Women Nail Services</div>
+  <div class="badge">💅 Men & Women Services</div>
 
   <br />
 
   <a class="btn" href="https://wa.me/35699758628" target="_blank">
     Book on WhatsApp
   </a>
+
+  <div class="phone">📞 +356 99 75 86 28</div>
 
   <div class="road">
     <div class="car">🚗</div>
@@ -191,16 +229,15 @@ footer {
 
   <div class="why-box">
     <p>
-      A.D Nails is a professional mobile nail service in Malta.  
-      I come directly to your home, saving you time and giving you a private, clean experience.
+      A.D Nails is a professional mobile nail service in Malta. I come directly to your home for a clean and private experience.
     </p>
 
     <p>
-      We offer services for <b>both women and men</b>, including manicures, gel nails, acrylic sets, and nail care.
+      We offer services for <b>both men and women</b>, including manicures, gel nails, acrylic sets, and nail care.
     </p>
 
     <p>
-      Affordable prices, clean work, and reliable service since 2020.
+      Trusted since 2020 with affordable prices and professional results.
     </p>
   </div>
 </div>
@@ -208,7 +245,7 @@ footer {
 <a class="float" href="https://wa.me/35699758628">💬</a>
 
 <footer>
-  © 2026 A.D Nails Malta | WhatsApp +356 99 75 86 28
+  © 2026 A.D Nails Malta
 </footer>
 
 </body>
