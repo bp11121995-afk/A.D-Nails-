@@ -9,250 +9,361 @@
 body {
   margin:0;
   font-family:Arial;
-  background:#fafafa;
   text-align:center;
+  overflow-x:hidden;
+}
+
+/* BACKGROUND */
+body::before, body::after {
+  content:"";
+  position:fixed;
+  width:400px;
+  height:400px;
+  border-radius:50%;
+  filter:blur(120px);
+  z-index:-1;
+  animation:move 10s infinite alternate;
+}
+
+body::before { background:#ffb6d5; top:-100px; left:-100px; }
+body::after { background:#c77dff; bottom:-100px; right:-100px; }
+
+@keyframes move {
+  0% {transform:translate(0,0);}
+  100% {transform:translate(80px,-60px);}
 }
 
 /* HEADER */
 header {
-  padding:30px;
-  background:#ffe0ef;
+  padding:70px 20px;
+  background:linear-gradient(#ffb6d5,#ffe6f0);
 }
 
-/* MONTH SWITCH */
-#monthSelector {
+h1 {color:#b30059;margin:0;}
+.since {font-size:14px;}
+
+.btn {
+  margin-top:15px;
+  display:inline-block;
+  padding:12px 20px;
+  background:#25D366;
+  color:white;
+  border-radius:10px;
+  text-decoration:none;
+}
+
+.phone {margin-top:10px;}
+
+/* ROAD */
+.road {
+  margin-top:30px;
+  height:80px;
+  background:#222;
+  position:relative;
+  overflow:hidden;
+  border-radius:10px;
+}
+
+.car {
+  position:absolute;
+  top:20px;
+  font-size:35px;
+  animation:drive 5s linear infinite;
+  transform:scaleX(-1);
+}
+
+.home {
+  position:absolute;
+  right:10px;
+  top:18px;
+  font-size:35px;
+}
+
+@keyframes drive {
+  0% {left:-80px;}
+  100% {left:110%;}
+}
+
+/* SECTION */
+.section {padding:50px 20px;}
+
+/* CARDS */
+.cards {
   display:flex;
+  flex-wrap:wrap;
   justify-content:center;
   gap:10px;
-  padding:10px;
 }
 
-.monthBtn {
-  padding:8px 12px;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-  background:#ddd;
+.card {
+  background:white;
+  padding:15px;
+  border-radius:10px;
+  width:200px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.1);
 }
 
-.monthBtn.active {
-  background:#b30059;
-  color:white;
-}
-
-/* WEEK HEADER */
-.weekdays {
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-  max-width:420px;
+/* WHY */
+.why-box {
+  max-width:600px;
   margin:auto;
-  font-size:12px;
-  font-weight:bold;
-  color:#666;
+  background:white;
+  padding:20px;
+  border-radius:10px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.1);
 }
 
 /* CALENDAR */
 #calendar {
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-  gap:5px;
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:8px;
   max-width:420px;
-  margin:auto;
-  padding:10px;
+  margin:20px auto;
 }
 
 .day {
-  height:45px;
+  width:60px;
+  height:60px;
   display:flex;
   align-items:center;
   justify-content:center;
-  border-radius:8px;
-  font-weight:bold;
+  border-radius:10px;
   color:white;
+  font-weight:bold;
   cursor:pointer;
 }
 
-.empty {background:transparent;}
-.free {background:#3498db;}
-.busy {background:#e74c3c;}
-.past {background:#333; cursor:not-allowed;}
+.available {background:#2ecc71;}
+.full {background:#e74c3c;}
+.closed {background:#555;}
 
 /* TIMES */
-#timesSection {
-  display:none;
-  padding:20px;
+#times {
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  max-width:300px;
+  margin:auto;
 }
 
 .time {
-  padding:12px;
-  margin:6px auto;
+  padding:10px;
   border-radius:8px;
-  max-width:260px;
   color:white;
+}
+
+.filter-btn {
+  margin:10px;
+  padding:10px 15px;
+  border:none;
+  background:black;
+  color:white;
+  border-radius:8px;
   cursor:pointer;
 }
+
+footer {padding:20px;}
 </style>
 </head>
 
 <body>
 
 <header>
-  <h1>A.D Nails 💅</h1>
+<h1>A.D Nails 💅</h1>
+<div class="since">Since 2020</div>
+<a class="btn" href="https://wa.me/35699758628">Book on WhatsApp</a>
+<div class="phone">📞 +356 99 75 86 28</div>
+
+<div class="road">
+  <div class="car">🚗</div>
+  <div class="home">🏠</div>
+</div>
 </header>
 
-<!-- MONTH SELECT -->
-<div id="monthSelector"></div>
-
-<!-- WEEK DAYS -->
-<div class="weekdays">
-  <div>Mon</div><div>Tue</div><div>Wed</div>
-  <div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
+<div class="section">
+<h2>Services</h2>
+<div class="cards">
+  <div class="card">Manicure €15–20</div>
+  <div class="card">Gel Nails €25–35</div>
+  <div class="card">Acrylic €40–50</div>
+  <div class="card">Men Manicure €10–15</div>
+</div>
 </div>
 
-<!-- CALENDAR -->
+<div class="section">
+<h2>Why A.D Nails?</h2>
+<div class="why-box">
+<p>Mobile nail service in Malta. I come to your home.</p>
+<p>For <b>men & women</b>. Clean, reliable, affordable.</p>
+<p>✔ Since 2020 ✔ Professional ✔ On time</p>
+</div>
+</div>
+
+<div class="section">
+<h2>📅 Booking Calendar</h2>
+
+<div style="margin:10px;">
+<button onclick="prevMonth()">⬅</button>
+<span id="monthName"></span>
+<button onclick="nextMonth()">➡</button>
+</div>
+
+<h3 id="spotsInfo"></h3>
+
 <div id="calendar"></div>
 
-<!-- TIMES -->
-<div id="timesSection">
-  <h2 id="selectedDate"></h2>
-  <div id="times"></div>
-  <button onclick="back()">⬅ Back</button>
+<div id="timesSection" style="display:none;">
+<div onclick="goBack()" style="cursor:pointer;margin:10px;">⬅ Back</div>
+<h3 id="selectedDate"></h3>
+<div id="times"></div>
+</div>
 </div>
 
+<footer>© 2026 A.D Nails Malta</footer>
+
 <script>
-
-const months = ["April","May","June"];
-let currentMonth = "April";
-
 const calendar = document.getElementById("calendar");
-const monthSelector = document.getElementById("monthSelector");
 const timesSection = document.getElementById("timesSection");
 const timesDiv = document.getElementById("times");
 const selectedDate = document.getElementById("selectedDate");
+const spotsInfo = document.getElementById("spotsInfo");
+const monthName = document.getElementById("monthName");
 
-let bookings = {};
+let currentMonth = 0;
+const MAX_PER_DAY = 5;
 
-// 5 REAL slots
-const slots = [
-  "08:00 - 10:00",
-  "10:00 - 12:00",
-  "12:00 - 14:00",
-  "14:00 - 16:00",
-  "16:00 - 18:00"
-];
+let bookings = JSON.parse(localStorage.getItem("bookings")) || {};
 
-// random availability per day
-function randomBusy() {
-  return Math.random() < 0.35;
+function getKey(date) {
+  return date.toISOString().split("T")[0];
 }
 
-// MONTH BUTTONS
-function createMonthButtons() {
-  months.forEach(m => {
-    let btn = document.createElement("button");
-    btn.innerText = m;
-    btn.className = "monthBtn";
-    if (m === currentMonth) btn.classList.add("active");
-
-    btn.onclick = () => {
-      currentMonth = m;
-      updateMonths();
-    };
-
-    monthSelector.appendChild(btn);
-  });
+function saveBookings() {
+  localStorage.setItem("bookings", JSON.stringify(bookings));
 }
 
-// CALENDAR
-function updateMonths() {
+function updateMonthName() {
+  let d = new Date();
+  d.setMonth(d.getMonth() + currentMonth);
+  monthName.innerText = d.toLocaleString('default', { month: 'long', year: 'numeric' });
+}
 
-  document.querySelectorAll(".monthBtn").forEach(b => {
-    b.classList.remove("active");
-    if (b.innerText === currentMonth) b.classList.add("active");
-  });
-
+function generateCalendar() {
   calendar.innerHTML = "";
 
   let today = new Date();
-  let year = 2026;
+  let first = new Date(today.getFullYear(), today.getMonth() + currentMonth, 1);
 
-  for (let i = 1; i <= 30; i++) {
+  let month = first.getMonth();
+  let year = first.getFullYear();
 
-    let key = currentMonth + "-" + i;
+  let days = new Date(year, month + 1, 0).getDate();
 
-    let dateObj = new Date(`${currentMonth} ${i}, ${year}`);
+  for (let i = 1; i <= days; i++) {
+    let date = new Date(year, month, i);
+    let key = getKey(date);
+    let day = date.getDay();
+
+    let used = bookings[key] || 0;
+    let available = MAX_PER_DAY - used;
 
     let div = document.createElement("div");
-    div.className = "day";
+    div.classList.add("day");
     div.innerText = i;
 
-    // PAST DAYS
-    if (dateObj < today) {
-      div.classList.add("past");
-      div.innerText = "X";
-      div.style.cursor = "not-allowed";
+    if (day === 0) {
+      div.classList.add("closed");
+      div.innerText = i + " S";
+    }
+    else if (available <= 0) {
+      div.classList.add("full");
+      div.innerText = i + " FULL";
     }
     else {
-
-      let booked = bookings[key] ? bookings[key].length : 0;
-      let busy = randomBusy();
-
-      if (booked >= slots.length || busy) {
-        div.classList.add("busy");
-      } else {
-        div.classList.add("free");
-        div.onclick = () => openDay(key);
-      }
+      div.classList.add("available");
+      div.innerText = i + " (" + available + ")";
+      div.onclick = () => showTimes(date);
     }
 
     calendar.appendChild(div);
   }
 }
 
-// OPEN DAY
-function openDay(key) {
-
+function showTimes(date) {
   calendar.style.display = "none";
-  monthSelector.style.display = "none";
   timesSection.style.display = "block";
 
-  selectedDate.innerText = key;
+  let key = getKey(date);
+  let used = bookings[key] || 0;
 
-  if (!bookings[key]) bookings[key] = [];
-
+  selectedDate.innerText = date.toDateString();
   timesDiv.innerHTML = "";
 
-  slots.forEach(slot => {
+  let times = ["08:00","10:00","12:00","14:00","16:00"];
 
+  times.forEach(t => {
     let div = document.createElement("div");
+    div.classList.add("time");
 
-    let booked = bookings[key].includes(slot);
+    if (used < MAX_PER_DAY) {
+      div.style.background = "#2ecc71";
+      div.innerText = "🟢 " + t;
 
-    div.className = "time";
-    div.style.background = booked ? "#e74c3c" : "#2ecc71";
-    div.innerText = booked ? "❌ " + slot : "🟢 " + slot;
-
-    if (!booked) {
       div.onclick = () => {
-        bookings[key].push(slot);
-        openDay(key);
+        bookings[key] = (bookings[key] || 0) + 1;
+        saveBookings();
+        generateCalendar();
+
+        window.open(`https://wa.me/35699758628?text=Book ${date.toDateString()} at ${t}`);
       };
+    } else {
+      div.style.background = "#e74c3c";
+      div.innerText = "🔴 FULL";
     }
 
     timesDiv.appendChild(div);
   });
 }
 
-function back() {
-  calendar.style.display = "grid";
-  monthSelector.style.display = "flex";
+function goBack() {
+  calendar.style.display = "flex";
   timesSection.style.display = "none";
 }
 
-// INIT
-createMonthButtons();
-updateMonths();
+function prevMonth() {
+  currentMonth--;
+  generateCalendar();
+  updateMonthName();
+}
 
+function nextMonth() {
+  currentMonth++;
+  generateCalendar();
+  updateMonthName();
+}
+
+/* SWIPE */
+let startX = 0;
+
+calendar.addEventListener("touchstart", e => {
+  startX = e.touches[0].clientX;
+});
+
+calendar.addEventListener("touchend", e => {
+  let endX = e.changedTouches[0].clientX;
+
+  if (startX - endX > 50) {
+    nextMonth();
+  }
+  if (endX - startX > 50) {
+    prevMonth();
+  }
+});
+
+updateMonthName();
+generateCalendar();
 </script>
 
 </body>
