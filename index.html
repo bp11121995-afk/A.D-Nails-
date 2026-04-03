@@ -13,7 +13,7 @@ body {
   overflow-x:hidden;
 }
 
-/* BACKGROUND LIGHTS */
+/* BACKGROUND */
 body::before, body::after {
   content:"";
   position:fixed;
@@ -22,15 +22,9 @@ body::before, body::after {
   border-radius:50%;
   filter:blur(120px);
   z-index:-1;
-  animation:move 10s infinite alternate;
 }
 body::before { background:#ffb6d5; top:-100px; left:-100px; }
 body::after { background:#c77dff; bottom:-100px; right:-100px; }
-
-@keyframes move {
-  0% {transform:translate(0,0);}
-  100% {transform:translate(80px,-60px);}
-}
 
 /* HEADER */
 header {
@@ -48,9 +42,8 @@ h1 {color:#b30059;margin:0;}
   border-radius:10px;
   text-decoration:none;
 }
-.phone {margin-top:10px;}
 
-/* ROAD */
+/* ROAD + CAR (UNCHANGED) */
 .road {
   margin-top:30px;
   height:80px;
@@ -77,10 +70,8 @@ h1 {color:#b30059;margin:0;}
   100% {left:110%;}
 }
 
-/* SECTION */
+/* SERVICES */
 .section {padding:50px 20px;}
-
-/* CARDS */
 .cards {
   display:flex;
   flex-wrap:wrap;
@@ -95,66 +86,65 @@ h1 {color:#b30059;margin:0;}
   box-shadow:0 5px 15px rgba(0,0,0,0.1);
 }
 
-/* WHY */
-.why-box {
-  max-width:600px;
-  margin:auto;
-  background:white;
-  padding:20px;
-  border-radius:10px;
-  box-shadow:0 5px 15px rgba(0,0,0,0.1);
+/* CALENDAR */
+.calendar-controls {
+  margin:10px;
 }
 
-/* CALENDAR */
-#calendar {
-  display:flex;
-  flex-wrap:wrap;
-  justify-content:center;
-  gap:8px;
+select {
+  padding:8px;
+  border-radius:8px;
+}
+
+.calendar {
   max-width:420px;
   margin:20px auto;
 }
+
+.weekdays, .days {
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:5px;
+}
+
+.weekdays div {
+  font-weight:bold;
+  font-size:12px;
+  padding:5px;
+}
+
 .day {
-  width:60px;
-  height:60px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border-radius:10px;
-  color:white;
+  padding:12px;
+  border-radius:8px;
   font-weight:bold;
   cursor:pointer;
+  background:#ddd;
 }
-.available {background:#2ecc71;}
-.full {background:#e74c3c;}
-.closed {background:#555;}
 
-/* TIMES */
-#times {
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:10px;
+/* STATES */
+.available {background:#2ecc71; color:white;}
+.full {background:#e74c3c; color:white;}
+.closed {background:#777; color:white;}
+.past {background:#bbb; pointer-events:none;}
+
+/* TIME BOX */
+#timesBox {
+  display:none;
   max-width:300px;
   margin:auto;
 }
+
 .time {
   padding:10px;
+  margin:5px;
   border-radius:8px;
+  background:#e74c3c;
   color:white;
 }
-
-/* BUTTON */
-.filter-btn {
-  margin:10px;
-  padding:10px 15px;
-  border:none;
-  background:black;
-  color:white;
-  border-radius:8px;
+.time.active {
+  background:#2ecc71;
   cursor:pointer;
 }
-
-footer {padding:20px;}
 </style>
 </head>
 
@@ -164,7 +154,6 @@ footer {padding:20px;}
 <h1>A.D Nails 💅</h1>
 <div class="since">Since 2020</div>
 <a class="btn" href="https://wa.me/35699758628">Book on WhatsApp</a>
-<div class="phone">📞 +356 99 75 86 28</div>
 
 <div class="road">
   <div class="car">🚗</div>
@@ -173,161 +162,130 @@ footer {padding:20px;}
 </header>
 
 <div class="section">
-<h2>Services</h2>
-<div class="cards">
-  <div class="card">Manicure €15–20</div>
-  <div class="card">Gel Nails €25–35</div>
-  <div class="card">Acrylic €40–50</div>
-  <div class="card">Men Manicure €10–15</div>
-</div>
-</div>
+<h2>💅 Booking Calendar (3 Months)</h2>
 
-<div class="section">
-<h2>Why A.D Nails?</h2>
-<div class="why-box">
-<p>Mobile nail service in Malta. I come to your home.</p>
-<p>For <b>men & women</b>. Clean, reliable, affordable.</p>
-<p>✔ Since 2020 ✔ Professional ✔ On time</p>
-</div>
+<div class="calendar-controls">
+<select id="monthSelect" onchange="renderCalendar()">
+  <option value="3">April</option>
+  <option value="4">May</option>
+  <option value="5">June</option>
+</select>
 </div>
 
-<div class="section">
-<h2>📅 Booking Calendar</h2>
+<div class="calendar">
+  <div class="weekdays">
+    <div>Mon</div><div>Tue</div><div>Wed</div>
+    <div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
+  </div>
+  <div id="days" class="days"></div>
+</div>
 
-<h3 id="spotsInfo"></h3>
-
-<button class="filter-btn" onclick="toggleAvailable()">
-Show Only Available Dates
-</button>
-
-<div id="calendar"></div>
-
-<div id="timesSection" style="display:none;">
-<div onclick="goBack()" style="cursor:pointer;margin:10px;">⬅ Back</div>
+<div id="timesBox">
 <h3 id="selectedDate"></h3>
 <div id="times"></div>
 </div>
 </div>
 
-<footer>© 2026 A.D Nails Malta</footer>
-
 <script>
-const calendar = document.getElementById("calendar");
-const timesSection = document.getElementById("timesSection");
-const timesDiv = document.getElementById("times");
-const selectedDate = document.getElementById("selectedDate");
-const spotsInfo = document.getElementById("spotsInfo");
+let timesList = ["08:00","10:00","12:00","14:00","16:00"];
 
-let showOnlyAvailable = false;
-
-/* ===================== 13 REAL AVAILABLE SPOTS ===================== */
-let availableDates = new Set();
-
-function generateAvailableDates() {
-  availableDates.clear();
-
+function getMonthData(monthIndex){
   let today = new Date();
+  let data = {};
 
-  while (availableDates.size < 13) {
-    let d = new Date(today);
-    d.setDate(today.getDate() + Math.floor(Math.random() * 60));
+  for(let i=0;i<90;i++){
+    let d = new Date();
+    d.setDate(today.getDate()+i);
+
+    if(d.getMonth() !== monthIndex) continue;
 
     let day = d.getDay();
 
-    // Sunday closed
-    if (day === 0) continue;
+    if(day === 0) continue; // Sunday closed
 
-    availableDates.add(d.toDateString());
+    // 1 random slot per day available
+    if(Math.random() > 0.5){
+      data[d.toDateString()] = true;
+    }
   }
+
+  return data;
 }
 
-function updateSpots() {
-  spotsInfo.innerText = `13 spots available this month`;
-}
+let availability = {};
 
-function generateCalendar() {
-  calendar.innerHTML = "";
+function renderCalendar(){
+  let month = parseInt(document.getElementById("monthSelect").value);
+  availability = getMonthData(month);
+
+  let container = document.getElementById("days");
+  container.innerHTML = "";
 
   let today = new Date();
 
-  for (let i = 0; i < 60; i++) {
-    let date = new Date();
-    date.setDate(today.getDate() + i);
+  for(let i=0;i<90;i++){
+    let d = new Date();
+    d.setDate(today.getDate()+i);
 
-    let day = date.getDay();
+    if(d.getMonth() !== month) continue;
 
     let div = document.createElement("div");
-    div.classList.add("day");
-    div.innerText = date.getDate();
+    div.className = "day";
+    div.innerText = d.getDate();
 
-    let isAvailable = availableDates.has(date.toDateString());
+    let day = d.getDay();
+    let isAvailable = availability[d.toDateString()];
 
-    // Sunday closed
-    if (day === 0) {
+    if(d < new Date().setHours(0,0,0,0)){
+      div.classList.add("past");
+    }
+    else if(day === 0){
       div.classList.add("closed");
     }
-
-    // available
-    else if (isAvailable) {
+    else if(isAvailable){
       div.classList.add("available");
-
-      div.onclick = () => showTimes(date.toDateString());
+      div.onclick = () => openTimes(d.toDateString());
     }
-
-    // full
     else {
       div.classList.add("full");
     }
 
-    if (showOnlyAvailable && !isAvailable) {
-      div.style.display = "none";
-    }
-
-    calendar.appendChild(div);
+    container.appendChild(div);
   }
 }
 
-function toggleAvailable() {
-  showOnlyAvailable = !showOnlyAvailable;
-  generateCalendar();
-}
+function openTimes(date){
+  document.getElementById("timesBox").style.display="block";
+  document.getElementById("selectedDate").innerText=date;
 
-function showTimes(dateText) {
-  calendar.style.display = "none";
-  timesSection.style.display = "block";
+  let box = document.getElementById("times");
+  box.innerHTML="";
 
-  selectedDate.innerText = dateText;
-  timesDiv.innerHTML = "";
+  let activeTime = timesList[Math.floor(Math.random()*timesList.length)];
 
-  let times = ["08:00","10:00","12:00","14:00","16:00"];
-
-  times.forEach(t => {
+  timesList.forEach(t=>{
     let div = document.createElement("div");
-    div.classList.add("time");
+    div.className="time";
 
-    div.style.background = "#2ecc71";
-    div.innerText = "🟢 " + t;
+    if(t === activeTime){
+      div.classList.add("active");
+      div.innerText="🟢 "+t;
 
-    div.onclick = () => {
-      window.open(
-        "https://wa.me/35699758628?text=" +
-        encodeURIComponent(`Booking: ${dateText} at ${t}`)
-      );
-    };
+      div.onclick=()=>{
+        window.open(
+          "https://wa.me/35699758628?text=" +
+          encodeURIComponent("Booking "+date+" at "+t)
+        );
+      };
+    } else {
+      div.innerText="🔴 "+t;
+    }
 
-    timesDiv.appendChild(div);
+    box.appendChild(div);
   });
 }
 
-function goBack() {
-  calendar.style.display = "flex";
-  timesSection.style.display = "none";
-}
-
-/* INIT */
-generateAvailableDates();
-updateSpots();
-generateCalendar();
+renderCalendar();
 </script>
 
 </body>
