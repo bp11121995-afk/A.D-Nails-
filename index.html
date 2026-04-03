@@ -1,150 +1,205 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>A.D Nails Malta</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background: linear-gradient(180deg, #ffe6f0, #ffffff);
-      color: #333;
-      text-align: center;
-      overflow-x: hidden;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>A.D Nails Malta</title>
 
-    header {
-      padding: 70px 20px;
-      background: linear-gradient(180deg, #ffb6d5, #ffe6f0);
-      position: relative;
-    }
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(180deg, #ffe6f0, #ffffff);
+  color: #333;
+}
 
-    h1 {
-      margin: 0;
-      font-size: 44px;
-      color: #b30059;
-    }
+/* HEADER */
+header {
+  text-align: center;
+  padding: 80px 20px 40px;
+  background: linear-gradient(180deg, #ffb6d5, #ffe6f0);
+}
 
-    .subtitle {
-      font-size: 18px;
-      margin-top: 10px;
-      color: #444;
-    }
+h1 {
+  font-size: 48px;
+  margin: 0;
+  color: #b30059;
+}
 
-    .badge {
-      display: inline-block;
-      margin-top: 15px;
-      padding: 6px 12px;
-      background: #000;
-      color: #fff;
-      border-radius: 20px;
-      font-size: 12px;
-    }
+.subtitle {
+  margin-top: 10px;
+  font-size: 18px;
+}
 
-    .btn {
-      display: inline-block;
-      margin-top: 25px;
-      padding: 14px 22px;
-      background: #000;
-      color: #fff;
-      text-decoration: none;
-      border-radius: 12px;
-      font-weight: bold;
-    }
+.badge {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 6px 14px;
+  background: black;
+  color: white;
+  border-radius: 20px;
+  font-size: 12px;
+}
 
-    .section {
-      padding: 50px 20px;
-    }
+.btn {
+  display: inline-block;
+  margin-top: 25px;
+  padding: 14px 26px;
+  background: #25D366;
+  color: white;
+  text-decoration: none;
+  border-radius: 12px;
+  font-weight: bold;
+}
 
-    .card {
-      background: white;
-      margin: 12px auto;
-      padding: 18px;
-      max-width: 420px;
-      border-radius: 14px;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
-    }
+/* ROAD */
+.road {
+  margin-top: 40px;
+  height: 90px;
+  background: #222;
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+}
 
-    footer {
-      padding: 30px;
-      background: #fff;
-      margin-top: 30px;
-      font-size: 14px;
-    }
+/* CAR */
+.car {
+  position: absolute;
+  top: 25px;
+  font-size: 38px;
+  animation: drive 5s linear infinite;
+}
 
-    /* 🚗 Moving car animation */
-    .road {
-      position: relative;
-      height: 120px;
-      margin-top: 30px;
-      background: #333;
-      overflow: hidden;
-    }
+/* HOME */
+.home {
+  position: absolute;
+  right: 15px;
+  top: 18px;
+  font-size: 40px;
+}
 
-    .car {
-      position: absolute;
-      top: 30px;
-      font-size: 40px;
-      animation: drive 6s linear infinite;
-    }
+/* ANIMATION FORWARD */
+@keyframes drive {
+  0% {
+    left: -80px;
+  }
+  100% {
+    left: 110%;
+  }
+}
 
-    @keyframes drive {
-      0% { left: -100px; }
-      100% { left: 110%; }
-    }
-  </style>
+/* SECTIONS */
+.section {
+  padding: 60px 20px;
+  text-align: center;
+}
+
+h2 {
+  color: #b30059;
+}
+
+/* CARDS */
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+}
+
+.card {
+  background: white;
+  width: 240px;
+  padding: 18px;
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+/* QR */
+.qr-box {
+  background: white;
+  display: inline-block;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+}
+
+.qr-box img {
+  width: 160px;
+}
+
+/* WHATSAPP FLOAT */
+.float {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #25D366;
+  color: white;
+  padding: 14px 16px;
+  border-radius: 50px;
+  font-size: 18px;
+  text-decoration: none;
+}
+
+/* FOOTER */
+footer {
+  text-align: center;
+  padding: 30px;
+  font-size: 13px;
+  background: #fff;
+  margin-top: 40px;
+}
+</style>
 </head>
+
 <body>
 
 <header>
   <h1>A.D Nails 💅</h1>
-  <p class="subtitle">Mobile Nail Technician in Malta 🚗💅</p>
-  <div class="badge">I come to your location</div>
+  <p class="subtitle">Luxury Mobile Nail Service in Malta</p>
+
+  <div class="badge">✨ I come to your home</div>
+  <div class="badge">💅 Clean • Professional • Affordable</div>
+
   <br />
+
   <a class="btn" href="https://wa.me/35699758628" target="_blank">
     Book on WhatsApp
   </a>
 
-  <!-- 🚗 Animation -->
   <div class="road">
     <div class="car">🚗</div>
+    <div class="home">🏠</div>
   </div>
 </header>
 
 <div class="section">
-  <h2>Services & Prices</h2>
+  <h2>Services</h2>
 
-  <div class="card">
-    <h3>Manicure</h3>
-    <p>€15 – €20</p>
-  </div>
-
-  <div class="card">
-    <h3>Gel Nails</h3>
-    <p>€25 – €35</p>
-  </div>
-
-  <div class="card">
-    <h3>Acrylic Full Set</h3>
-    <p>€40 – €50</p>
-  </div>
-
-  <div class="card">
-    <h3>Nail Art</h3>
-    <p>€5 – €15 extra</p>
+  <div class="cards">
+    <div class="card"><h3>Manicure</h3><p>€15 - €20</p></div>
+    <div class="card"><h3>Gel Nails</h3><p>€25 - €35</p></div>
+    <div class="card"><h3>Acrylic Set</h3><p>€40 - €50</p></div>
+    <div class="card"><h3>Nail Art</h3><p>From €5</p></div>
   </div>
 </div>
 
 <div class="section">
-  <h2>Why Choose Me?</h2>
-  <p style="max-width:600px;margin:auto;">
-    I am a <b>mobile nail technician in Malta</b>, offering professional nail services at your home or location. No need to travel — I come to you.
-  </p>
+  <h2>Scan & Book</h2>
+
+  <div class="qr-box">
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://wa.me/35699758628"/>
+    <p>Scan to book instantly</p>
+  </div>
 </div>
 
+<a class="float" href="https://wa.me/35699758628">💬</a>
+
 <footer>
-  <p>© 2026 A.D Nails Malta | Mobile Nail Technician | WhatsApp: +356 99 75 86 28</p>
+  © 2026 A.D Nails Malta | WhatsApp +356 99 75 86 28
+</footer>
+
+</body>
+</html>
 </footer>
 
 </body>
